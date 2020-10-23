@@ -193,9 +193,10 @@ void UpdateDrawFrame(void) {
         }
 
     } else {
-        DrawTextEx(GuiGetFont(), "To start, DRAG & DROP A PNG IMAGE HERE.",
+        DrawTextEx(GuiGetFont(), "Drag and drop a PNG image onto the canvas.\n"
+                                 "Use your scroll wheel to zoom in and out.",
                    Vector2{10, (float) GetScreenHeight() - 52},
-                   19, 0.0f, WHITE);
+                   16, 0.0f, WHITE);
         GuiDisable();
     }
 
@@ -314,6 +315,13 @@ void handleDroppedFiles(const int screenWidth, const int screenHeight, Image &im
                         imageScale = (float) (screenHeight - 100) / (float) texture.height;
                     else imageScale = (float) (screenWidth - 100) / (float) texture.width;
                 }
+            }
+            else{
+                DrawTextEx(GuiGetFont(), "Only PNG images are supported."
+                                         ,
+                           Vector2{10, (float) GetScreenHeight() - 52},
+                           16, 0.0f, ORANGE);
+                GuiDisable();
             }
         }
         ClearDroppedFiles();
