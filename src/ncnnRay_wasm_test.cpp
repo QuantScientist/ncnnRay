@@ -196,7 +196,7 @@ void UpdateDrawFrame(void) {
         DrawTextEx(GuiGetFont(), "Drag and drop a PNG image onto the canvas.\n"
                                  "Use your scroll wheel to zoom in and out.",
                    Vector2{10, (float) GetScreenHeight() - 52},
-                   16, 0.0f, WHITE);
+                   19, 0.0f, WHITE);
         GuiDisable();
     }
 
