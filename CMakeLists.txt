@@ -373,7 +373,13 @@ file(COPY "resources/candy.bin" DESTINATION ${ACTUAL_DIR})
 #file(COPY "resources/ncnn.html" DESTINATION ${ACTUAL_DIR})
 #file(COPY "resources/shell-ray.html" DESTINATION ${ACTUAL_DIR})
 #file(COPY "resources/shell.html" DESTINATION ${ACTUAL_DIR})
-file(COPY "resources/style.css" DESTINATION ${ACTUAL_DIR})
-file(COPY "resources/index.html" DESTINATION ${ACTUAL_DIR})
-file(COPY ${CMAKE_SOURCE_DIR}/index.html DESTINATION "resources/index.html")
+file(COPY ${CMAKE_SOURCE_DIR}/index.html DESTINATION ${ACTUAL_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/style.css DESTINATION ${ACTUAL_DIR})
+
+file(COPY ${ACTUAL_DIR}/ncnnRay_wasm_test.js DESTINATION ${CMAKE_SOURCE_DIR}/)
+file(COPY ${ACTUAL_DIR}/ncnnRay_wasm_test.wasm DESTINATION ${CMAKE_SOURCE_DIR}/)
+file(COPY ${ACTUAL_DIR}/ncnnRay_wasm_test.data DESTINATION ${CMAKE_SOURCE_DIR}/)
+
+
+
 
