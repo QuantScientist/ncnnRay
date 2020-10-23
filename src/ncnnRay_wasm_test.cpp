@@ -86,6 +86,8 @@ int pixelFormatActive = 0;
 const char *pixelFormatTextList[1] = {"RGB"};
 bool textBoxEditMode = false;
 
+bool badFileExt=false;
+
 int main() {
     bool use_vulkan_compute = true;
 #if EMSCRIPTEN
@@ -127,6 +129,7 @@ int main() {
 
     TraceLog(LOG_INFO, "ncnnRay: models using vulkan::%i", detector->Net->opt.use_vulkan_compute);
 
+    #if EMSCRIPTEN
     emscripten_fetch_attr_t attr;
     emscripten_fetch_attr_init(&attr);
     strcpy(attr.requestMethod, "GET");
@@ -138,6 +141,7 @@ int main() {
 //    emscripten_fetch(&attr, "https://raw.githubusercontent.com/juj/emscripten/emscripten_fetch/system/include/emscripten/fetch.h");
 //    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
 //    emscripten_fetch(&attr, "http://localhost:8000/web/");
+    #endif // NCNN_VULKAN
 
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -197,6 +201,7 @@ void UpdateDrawFrame(void) {
                                  "Use your scroll wheel to zoom in and out.",
                    Vector2{10, (float) GetScreenHeight() - 52},
                    19, 0.0f, WHITE);
+//        badFileExt=false;
         GuiDisable();
     }
 
@@ -277,6 +282,27 @@ void UpdateDrawFrame(void) {
 
     if (btnExport) DrawText("Image saved", 20, screenHeight - 20, 20, RED);
 
+    if (badFileExt) {
+        GuiEnable();
+        DrawRectangle(0, 0, screenWidth, screenHeight,
+                      Fade(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)), 0.75f));
+        GuiWindowBox(Rectangle{windowBoxRec.x, windowBoxRec.y, 330, 100},
+                                        "Warning.");
+//        badFileExt=false;
+        GuiLabel(Rectangle{windowBoxRec.x + 10, windowBoxRec.y + 35, 300, 25}, "Only PNG files are supported.");
+//        fileFormatActive = GuiComboBox(Rectangle{windowBoxRec.x + 80, windowBoxRec.y + 35, 130, 25},
+//                                       TextJoin(fileFormatTextList, 1, ";"), fileFormatActive);
+//        GuiLabel(Rectangle{windowBoxRec.x + 10, windowBoxRec.y + 70, 63, 25}, "Pixel:");
+//        pixelFormatActive = GuiComboBox(Rectangle{windowBoxRec.x + 80, windowBoxRec.y + 70, 130, 25},
+//                                        TextJoin(pixelFormatTextList, 1, ";"), pixelFormatActive);
+//        GuiLabel(Rectangle{windowBoxRec.x + 10, windowBoxRec.y + 105, 50, 25}, "Name:");
+//        if (GuiTextBox(Rectangle{windowBoxRec.x + 80, windowBoxRec.y + 105, 130, 25},
+//                       fileName, 64, textBoxEditMode))
+//            textBoxEditMode = !textBoxEditMode;
+
+        badFileExt = !GuiButton(Rectangle{windowBoxRec.x + 10, windowBoxRec.y + 65, 300, 25}, "OK");
+    }
+
     GuiEnable();
     EndDrawing();
     //----------------------------------------------------------------------------------
@@ -303,6 +329,7 @@ void handleDroppedFiles(const int screenWidth, const int screenHeight, Image &im
 
         if (fileCount == 1) {
             if (IsFileExtension(droppedFiles[0], ".png")) {
+                badFileExt=false;
                 TraceLog(LOG_INFO, "ncnnRay: image");
                 Image imTemp = LoadImage(droppedFiles[0]);
                 if (imTemp.data != nullptr) {
@@ -317,13 +344,10 @@ void handleDroppedFiles(const int screenWidth, const int screenHeight, Image &im
                 }
             }
             else{
-                DrawTextEx(GuiGetFont(), "Only PNG images are supported."
-                                         ,
-                           Vector2{10, (float) GetScreenHeight() - 52},
-                           16, 0.0f, ORANGE);
-                GuiDisable();
+                badFileExt=true;
             }
         }
+
         ClearDroppedFiles();
     }
 }

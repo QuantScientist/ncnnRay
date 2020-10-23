@@ -81,13 +81,13 @@
 #include <string.h>
 
 
+
+
+#if EMSCRIPTEN
 #include <emscripten.h>
 #include <fetch.h>
 #include <emscripten/fetch.h>
 #include <emscripten/emscripten.h>
-
-#if EMSCRIPTEN
-
 #endif
 
 //#if NCNN_VULKAN
@@ -160,6 +160,7 @@ public:
     }
 };
 
+#if EMSCRIPTEN
 static void downloadSucceeded(emscripten_fetch_t *fetch) {
 //    printf("Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
     TraceLog(LOG_INFO, "Finished downloading %i", fetch->numBytes);
@@ -171,6 +172,7 @@ static void downloadFailed(emscripten_fetch_t *fetch) {
     TraceLog(LOG_INFO,"Downloading %s failed, HTTP failure status code: %d.\n", fetch->url, fetch->status);
     emscripten_fetch_close(fetch); // Also free data on failure.
 }
+#endif // NCNN_VULKAN
 
 static int tensorDIMS(const ncnn::Mat &tensor) {
     return tensor.dims;

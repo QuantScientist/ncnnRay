@@ -159,9 +159,7 @@ else()
     set(raylib_VERBOSE 1)
     target_link_libraries(${EXAMPLE_001_WASM} raylib  ncnn)
     target_include_directories(
-            ${EXAMPLE_001_WASM} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ncnn/src"
-            PUBLIC "c:/emsdk/upstream/emscripten/system/include/emscripten/"
-            "c:/emsdk/upstream/emscripten/system/include/"
+            ${EXAMPLE_001_WASM} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ncnn/src" #
     )
     set_target_properties(${EXAMPLE_001_WASM} PROPERTIES
             CXX_STANDARD 14
