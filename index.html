@@ -32,7 +32,12 @@
     #header {
       width: 100%;
       height: 100%;
-      background-color: darkgray;
+      margin: 0 auto;
+      display: block;
+      background-color: black;
+      color: rgb(10, 164, 174);
+      font-family: 'Lucida Console', Monaco, monospace;
+      outline: none;
     }
 
     /* NOTE: ncnnRay logo is embedded in the page as base64 png image */
@@ -53,8 +58,8 @@
     /* NOTE: Canvas *must not* have any border or padding, or mouse coords will be wrong */
     canvas.emscripten {
       border: 0px none;
-      background: gray;
-      width: 60%
+      background: rgb(54,54, 54);
+      width: 50%
     }
 
     .spinner {

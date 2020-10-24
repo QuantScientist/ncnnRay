@@ -1,5 +1,5 @@
 body {
-    margin: 0; background-color: gray;
+    margin: 0; background-color: rgb(54,54, 54);
     -webkit-font-smoothing: subpixel-antialiased;
     font-smoothing: subpixel-antialiased;
 }
