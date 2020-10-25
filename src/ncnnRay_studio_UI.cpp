@@ -6,7 +6,7 @@
 #define RAYGUI_SUPPORT_RICONS
 
 #include "../include/raygui/raygui.h"
-#include "../bin64/_deps/raylib-src/src/external/glad.h"
+#include "../3rdparty/raylib-3.0.0/src/external/glad.h"
 #include "../include/raygui/ricons.h"
 
 #define PL_MPEG_IMPLEMENTATION
