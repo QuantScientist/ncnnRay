@@ -153,9 +153,13 @@ int main() {
     // TTF Font loading with custom generation parameters
     Font font = LoadFontEx("GameCube.ttf", 18, 0, 0);
     GuiSetFont(font);
-//    std::string fileName = "faces.png";
-//    image = LoadImage(fileName.c_str());
-//    texture = LoadTextureFromImage(image);
+    std::string fileName = "faces01.png";
+    image = LoadImage(fileName.c_str());
+    texture = LoadTextureFromImage(image);
+
+    if (texture.id > 0) {
+        imageLoaded=true;
+    }
 
 //    GuiPanel(Rectangle{0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()});
 
@@ -179,7 +183,6 @@ int main() {
 void UpdateDrawFrame(void) {
     handleDroppedFiles(screenWidth, screenHeight, image, texture, imageLoaded, imageScale);
     handleExport(fileName, image, imageLoaded, btnExport, windowBoxActive, texture);
-    handleImageScaling(screenWidth, screenHeight, image, imageLoaded, imageScale, imageRec);
     handleImageScaling(screenWidth, screenHeight, image, imageLoaded, imageScale, imageRec);
     BeginDrawing();
     ClearBackground(DARKGRAY);
