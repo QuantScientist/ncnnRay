@@ -54,7 +54,7 @@ bool vidLoaded = false;
 float imageScale = 1.0f;
 float randomSeed = 0;
 Rectangle imageRec = {0.0f};
-const char *mainTitle = "ncnnRay: WebAssembly AI studio";
+const char *mainTitle = "ncnnRay: WebAssembly AI studio. Drag and drop a PNG image onto the canvas.";
 Color defTextCLR = GetColor(GuiGetStyle(DEFAULT, LINE_COLOR));
 
 
@@ -363,6 +363,11 @@ void handleExport(char *fileName, const Image &image, bool imageLoaded, bool btn
             if ((GetExtension(fileName) == nullptr) || (!IsFileExtension(fileName, ".png")))
                 strcat(fileName, ".png\0");     // No extension provided
             ExportImage(image, fileName);
+            #if defined(EMSCRIPTEN)
+                        // Download file from MEMFS (emscripten memory filesystem)
+                // saveFileFromMEMFSToDisk() function is defined in raylib/src/shell.html
+                emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", GetFileName(fileName), GetFileName(fileName)));
+            #endif
             UnloadTexture(texture);
             texture = LoadTextureFromImage(image);
         }
