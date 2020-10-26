@@ -209,24 +209,24 @@ void UpdateDrawFrame(void) {
             Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 2 * padding, buttonWidth, buttonHeight},
             "LFFD")) {
         lffd->detectFacesAndDrawOnImage(image);
-        TraceLog(LOG_INFO, "ncnnRay: retina");
+        TraceLog(LOG_INFO, "ncnnRay: LFFD");
         UnloadTexture(texture);
         texture = LoadTextureFromImage(image);
     }
+
+//    if (GuiButton(
+//            Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 3 * padding, buttonWidth, buttonHeight},
+//            "Mosaic")) {
+////        ImageResize(&image,image.width/2, image.height/2);
+//        image = nstyle2->applyStyleOnImage(image);
+////        ImageResize(&image,image.width*4, image.height*4);
+//        TraceLog(LOG_INFO, "ncnnRay: Mosaic");
+//        UnloadTexture(texture);
+//        texture = LoadTextureFromImage(image);
+//    }
 
     if (GuiButton(
             Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 3 * padding, buttonWidth, buttonHeight},
-            "Mosaic")) {
-//        ImageResize(&image,image.width/2, image.height/2);
-        image = nstyle2->applyStyleOnImage(image);
-//        ImageResize(&image,image.width*4, image.height*4);
-        TraceLog(LOG_INFO, "ncnnRay: Mosaic");
-        UnloadTexture(texture);
-        texture = LoadTextureFromImage(image);
-    }
-
-    if (GuiButton(
-            Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 4 * padding, buttonWidth, buttonHeight},
             "RetinaF")) {
         detector->detectFaces(image);
         TraceLog(LOG_INFO, "ncnnRay: retina");
@@ -235,15 +235,15 @@ void UpdateDrawFrame(void) {
     }
 
 
-    if (GuiButton(
-            Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 5 * padding, buttonWidth, buttonHeight},
-            "Candy")) {
-//        ImageResize(&image, image.width / 4, image.height / 4);
-        image = nstyle1->applyStyleOnImage(image);
-        TraceLog(LOG_INFO, "ncnnRay: candy");
-//        ImageColorBrightness(&image, -40);
-        texture = LoadTextureFromImage(image);
-    }
+//    if (GuiButton(
+//            Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 5 * padding, buttonWidth, buttonHeight},
+//            "Candy")) {
+////        ImageResize(&image, image.width / 4, image.height / 4);
+//        image = nstyle1->applyStyleOnImage(image);
+//        TraceLog(LOG_INFO, "ncnnRay: candy");
+////        ImageColorBrightness(&image, -40);
+//        texture = LoadTextureFromImage(image);
+//    }
 
     if (GuiButton(
             Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight},
