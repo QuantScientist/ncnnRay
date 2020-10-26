@@ -23,7 +23,7 @@
 
 # About
 
-Live demo here: https://quantscientist.github.io/ncnnRay/
+A live WebAssembly demo is available here: https://quantscientist.github.io/ncnnRay/
 
 <h1 align="center">    
   <img src="https://github.com/QuantScientist/ncnnRay/blob/main/assets/manga.png.exp.png?raw=true" width="55%"></a>  
@@ -186,7 +186,10 @@ an unmodified zlib/libpng license (View raylib.h for details) Copyright (c) 2014
 
 * Style transfer models from: https://github.com/nihui/ncnn-android-styletransfer
 
-* An inventory of ncnn models: https://github.com/nilseuropa/ncnn_models 
+* An inventory of ncnn models: https://github.com/nilseuropa/ncnn_models
+ 
+* https://sudoku-solver.krmuller.workers.dev/ 
+
  
 ## Progress / features 
 
