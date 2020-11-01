@@ -43,6 +43,9 @@ int main(void)
 
         if (mouseOnText)
         {
+            // Set the window's cursor to the I-Beam
+            SetMouseCursor(MOUSE_CURSOR_IBEAM);
+
             // Get pressed key (character) on the queue
             int key = GetKeyPressed();
 
@@ -67,6 +70,7 @@ int main(void)
                 if (letterCount < 0) letterCount = 0;
             }
         }
+        else if (GetMouseCursor() != MOUSE_CURSOR_DEFAULT) SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
         if (mouseOnText) framesCounter++;
         else framesCounter = 0;
@@ -86,7 +90,7 @@ int main(void)
 
             DrawText(name, textBox.x + 5, textBox.y + 8, 40, MAROON);
 
-            DrawText(FormatText("INPUT CHARS: %i/%i", letterCount, MAX_INPUT_CHARS), 315, 250, 20, DARKGRAY);
+            DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, MAX_INPUT_CHARS), 315, 250, 20, DARKGRAY);
 
             if (mouseOnText)
             {

@@ -27,10 +27,12 @@ Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool 
         _retinaface(retinaface),
         Net(new ncnn::Net())
 {
-
+	
+	
     #if NCNN_VULKAN
+	Net->opt.use_vulkan_compute=true;
     if (Net->opt.use_vulkan_compute) {
-        TraceLog(LOG_INFO, "ncnnRay: Detector Opt using vulkan::%i", Net->opt.use_vulkan_compute);
+        TraceLog(LOG_INFO, "ncnnRay: Detector opt using vulkan::%i", Net->opt.use_vulkan_compute);
         Net->set_vulkan_device(g_vkdev);
     }
     #endif // NCNN_VULKAN

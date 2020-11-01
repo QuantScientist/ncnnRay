@@ -48,7 +48,9 @@ void handleExport(char *fileName, const Image &image, bool imageLoaded, bool btn
 // Main Enry Point
 //----------------------------------------------------------------------------------
 Image image = {0};
+Image *image2 = nullptr;
 Texture2D texture = {0};
+Texture2D *texture2 = nullptr;
 bool imageLoaded = false;
 bool vidLoaded = false;
 float imageScale = 1.0f;
@@ -88,6 +90,26 @@ bool textBoxEditMode = false;
 
 bool badFileExt=false;
 
+#if EMSCRIPTEN
+void mydownloadSucceeded(emscripten_fetch_t *fetch) {
+//    printf("Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
+
+//    std::string fileName = "x.png";
+//    auto mFile=fopen(fileName.c_str(),"wb");
+//    fwrite(fetch->data,1,fetch->numBytes,mFile);
+//    fclose(mFile);
+//    Image image = LoadImageFromMemory("png",  fetch->__attributes.requestData, fetch->__attributes.requestDataSize);
+//    Texture2D texture = LoadTextureFromImage(image);
+    *image2 = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+    *texture2 = LoadTextureFromImage(*image2);
+    TraceLog(LOG_INFO, "Finished downloading %i", fetch->numBytes);
+    std::cout<<"XHR totalBytes:"<< fetch->totalBytes<<std::endl;
+    std::cout<<"XHR GET:"<< fetch->status<<std::endl;
+    std::cout<<"XHR data:"<< fetch->data<<std::endl;
+    emscripten_fetch_close(fetch); // Free data associated with the fetch.
+}
+#endif
+
 int main() {
     bool use_vulkan_compute = true;
 #if EMSCRIPTEN
@@ -122,26 +144,13 @@ int main() {
     windowBoxRec = {static_cast<float>(screenWidth / 2 - 110), static_cast<float>(screenHeight / 2 - 100), 220, 190};
 
     detector = new Detector(model_path, opt, false);
-    nstyle1 = new NeuralStyle(model_path, model_name, opt);
-    nstyle2 = new NeuralStyle(model_path, model_name2, opt);
+//    nstyle1 = new NeuralStyle(model_path, model_name, opt);
+//    nstyle2 = new NeuralStyle(model_path, model_name2, opt);
 
     lffd = new LFFD(model_path, 8, 0, opt);
 
     TraceLog(LOG_INFO, "ncnnRay: models using vulkan::%i", detector->Net->opt.use_vulkan_compute);
 
-    #if EMSCRIPTEN
-    emscripten_fetch_attr_t attr;
-    emscripten_fetch_attr_init(&attr);
-    strcpy(attr.requestMethod, "GET");
-    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-    attr.onsuccess = downloadSucceeded;
-    attr.onerror = downloadFailed;
-    //emscripten_fetch(&attr, "http://localhost:9999/update.sh");
-
-//    emscripten_fetch(&attr, "https://raw.githubusercontent.com/juj/emscripten/emscripten_fetch/system/include/emscripten/fetch.h");
-//    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-//    emscripten_fetch(&attr, "http://localhost:8000/web/");
-    #endif // NCNN_VULKAN
 
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -153,9 +162,75 @@ int main() {
     // TTF Font loading with custom generation parameters
     Font font = LoadFontEx("GameCube.ttf", 18, 0, 0);
     GuiSetFont(font);
-    std::string fileName = "faces01.png";
-    image = LoadImage(fileName.c_str());
-    texture = LoadTextureFromImage(image);
+
+//    std::string fileName = "faces01.png";
+//    image = LoadImage(fileName.c_str());
+//    texture = LoadTextureFromImage(image);
+
+    #if EMSCRIPTEN
+    emscripten_fetch_t *fetch;
+    emscripten_fetch_attr_t attr;
+    emscripten_fetch_attr_init(&attr);
+    strcpy(attr.requestMethod, "GET");
+//    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+    attr.attributes =  EMSCRIPTEN_FETCH_PERSIST_FILE | EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+    attr.onsuccess = mydownloadSucceeded;
+    attr.onerror = mydownloadFailed;
+    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+//    emscripten_fetch(&attr, "https://cdn.knoema.com/flags/normal/tj.png");
+
+//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
+//    texture = LoadTextureFromImage(image);
+//    TraceLog(LOG_INFO, "ncnnRay: texture.width:%i", texture.width);
+
+    while (1) {
+        if (texture2->id > 0) {
+            texture=*texture2;
+            image=*image2;
+            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- texture.width:%i", texture.width);
+            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- image.width:%i", image.width);
+            break;
+        }
+//        printf("sleeping...\n");
+        emscripten_sleep(50);
+    }
+    #endif
+//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
+//    texture = LoadTextureFromImage(image);
+
+
+//    httplib:: Client cli("https://pbs.twimg.com");
+//
+//    auto res = cli.Get("/media/CAoh21KWEAARhYx.png");
+//
+//    if (res) {
+//        cout << res->status << endl;
+//        cout << res->get_header_value("Content-Type") << endl;
+//         cout << res->body << endl;
+//    }
+
+////    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+//
+////    image = LoadImageFromMemory("png",  static_cast< * c_char>(attr.requestData), attr.requestDataSize);
+//    image = LoadImageFromMemory("png",  attr.requestData, attr.requestDataSize);
+//    texture = LoadTextureFromImage(image);
+//    image = LoadImage("https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+//    texture = LoadTextureFromImage(image);
+//    image = LoadImage("FILES/https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+//    texture = LoadTextureFromImage(image);
+//    image = LoadImage("CAoh21KWEAARhYx.png");
+//    texture = LoadTextureFromImage(image);
+//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+
+//    size_t width = image.width;
+//    size_t height = image.height;
+//    int dataSize = GetPixelDataSize(width, height, image.format);
+//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", dataSize);
+
+//    emscripten_fetch(&attr, "http://localhost:8000/web/");
+//    #endif //
 
     if (texture.id > 0) {
         imageLoaded=true;

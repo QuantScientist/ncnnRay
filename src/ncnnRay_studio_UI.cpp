@@ -177,7 +177,7 @@ int main() {
         if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 5 * padding, buttonWidth, buttonHeight}, "RetinaF")) {
             detector.detectFaces(image);
             TraceLog(LOG_INFO, "ncnnRay: RetinaFace");
-            ImageColorBrightness(&image, -40);
+            //ImageColorBrightness(&image, -40);
             texture = LoadTextureFromImage(image);
         }
 
