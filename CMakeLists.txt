@@ -249,8 +249,10 @@ if (NOT EMSCRIPTEN)
             src/models/FaceDetector.cpp
             src/models/neural.h
             src/models/neural.cpp
-
+#            include/easylogging/easylogging++.h
+#            include/easylogging/easylogging++.cc
             )
+
     set(raylib_VERBOSE 1)
     target_link_libraries(${EXAMPLE_003_EXE} raylib  ncnn)
     #target_link_libraries(${PROJECT_NAME} m)

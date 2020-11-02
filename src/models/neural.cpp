@@ -26,6 +26,7 @@ NeuralStyle::NeuralStyle(const std::string &model_path,
 NeuralStyle::~NeuralStyle() = default;
 
 Image NeuralStyle::applyStyleOnImage(Image &image) {
+    ScopeTimer Tmr("NeuralStyle::applyStyleOnImage");
     ncnn::Mat inmat = rayImageToNcnn(image);
     cout << "Total in:" << inmat.total() << endl;
     cout << "Dims in:" << tensorDIMS(inmat) << endl;;

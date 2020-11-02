@@ -61,41 +61,83 @@
 
 #include <algorithm>
 #include <windows.h> // Sleep()
-
 #else
 #include <unistd.h> // sleep()
 #endif
 //#include "benchmark.h"
 #include "cpu.h"
 #include "net.h"
-
 #include "cpu.h"
 #include "datareader.h"
 #include "net.h"
 #include "gpu.h"
 #include "benchmark.h"
-
 #include <cstring> //to import the std::memcpy function.
-
 #include <iostream>
 #include <string.h>
+//#include "../include/easylogging/easylogging++.h"
+//INITIALIZE_EASYLOGGINGPP;
 
+#include <cmath>
+#include <string>
+#include <chrono>
+#include <algorithm>
+#include <iostream>
 
+#ifndef SCOPETIMER__3472893
+#define SCOPETIMER__3472893
 
+#include <iostream>
+#include <chrono>
+
+struct ScopeTimer
+{
+    std::chrono::high_resolution_clock::time_point start;
+    const char* title;
+
+    ScopeTimer()
+    {
+        title = nullptr;
+        start = std::chrono::high_resolution_clock::now();
+    }
+
+    ScopeTimer(const char* title)
+    {
+        this->title = title;
+        start = std::chrono::high_resolution_clock::now();
+    }
+
+    ~ScopeTimer()
+    {
+        using std::chrono::duration_cast;
+        using std::chrono::microseconds;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(end - start)/1000.0;
+        std::cout << (title ? title : "") << ": " << duration.count() << " ms\n";
+    }
+};
+
+#endif
 
 #if EMSCRIPTEN
 #include <emscripten.h>
 #include <fetch.h>
 #include <emscripten/fetch.h>
 #include <emscripten/emscripten.h>
+
+static void downloadSucceeded(emscripten_fetch_t *fetch) {
+//    printf("Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
+    TraceLog(LOG_INFO, "Finished downloading %i", fetch->numBytes);
+    // The data is now available at fetch->data[0] through fetch->data[fetch->numBytes-1];
+    emscripten_fetch_close(fetch); // Free data associated with the fetch.
+}
+
+static void downloadFailed(emscripten_fetch_t *fetch) {
+    TraceLog(LOG_INFO,"Downloading %s failed, HTTP failure status code: %d.\n", fetch->url, fetch->status);
+    emscripten_fetch_close(fetch); // Also free data on failure.
+}
 #endif
 
-//#if NCNN_VULKAN
-//#include "gpu.h"
-//#endif
-
-//#include "models/LFFD.h"
-//#include "models/neural.h"
 //############################################ ncnn ##########################################
 
 static int g_warmup_loop_count = 8;
@@ -110,69 +152,8 @@ static ncnn::VulkanDevice *g_vkdev = 0;
 static ncnn::VkAllocator *g_blob_vkallocator = 0;
 static ncnn::VkAllocator *g_staging_vkallocator = 0;
 #endif // NCNN_VULKAN
-
-
 using namespace std;
-
-//class VisionUtils {
-//public:
-//    VisionUtils();
-//
-//    int tensorDIMS(const ncnn::Mat &tensor);
-//    ncnn::Mat rayImageToNcnn(const Image &image);
-//    Image ncnnToRayImage(ncnn::Mat  &tensor);
-//    ncnn::Option optGPU(bool use_vulkan_compute, int gpu_device);
-//    int isGPU();
-//};
-
-//VisionUtils::VisionUtils() {}
-
-#include <chrono>
-#include <stack>
-
 using namespace std::chrono;
-
-class PerfTimer
-{
-public:
-    std::stack<high_resolution_clock::time_point> tictoc_stack;
-
-    void tic()
-    {
-        high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        tictoc_stack.push(t1);
-    }
-
-    double toc(std::string msg = "", bool flag = true)
-    {
-        double diff = duration_cast<milliseconds>(high_resolution_clock::now() - tictoc_stack.top()).count();
-        if(msg.size() > 0){
-            if (flag)
-                std::cout << "%s time elapsed: %f ms\n" << msg.c_str() << diff<<std::endl;
-        }
-
-        tictoc_stack.pop();
-        return diff;
-    }
-    void reset()
-    {
-        tictoc_stack = std::stack<high_resolution_clock::time_point>();
-    }
-};
-
-#if EMSCRIPTEN
-static void downloadSucceeded(emscripten_fetch_t *fetch) {
-//    printf("Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
-    TraceLog(LOG_INFO, "Finished downloading %i", fetch->numBytes);
-    // The data is now available at fetch->data[0] through fetch->data[fetch->numBytes-1];
-    emscripten_fetch_close(fetch); // Free data associated with the fetch.
-}
-
-static void downloadFailed(emscripten_fetch_t *fetch) {
-    TraceLog(LOG_INFO,"Downloading %s failed, HTTP failure status code: %d.\n", fetch->url, fetch->status);
-    emscripten_fetch_close(fetch); // Also free data on failure.
-}
-#endif // NCNN_VULKAN
 
 static int tensorDIMS(const ncnn::Mat &tensor) {
     return tensor.dims;

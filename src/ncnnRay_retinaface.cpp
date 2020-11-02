@@ -33,8 +33,6 @@ int main(int argc, char** argv)
 
     // slim or RFB
     Detector detector (model_path, opt, false);
-    PerfTimer timer;
-
 //    // scale
     Image img = LoadImage(fileName.c_str());   // Loaded in CPU memory (RAM)
     float long_side = std::max(img.width, img.height);

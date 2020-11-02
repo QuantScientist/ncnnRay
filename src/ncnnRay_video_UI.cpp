@@ -61,8 +61,8 @@ int main() {
 
     Detector detector (model_path, opt, false);
 
-    const int screenWidth = 1300;
-    const int screenHeight = 800;
+    const int screenWidth = 1600;
+    const int screenHeight = 1200;
 
     const char *mainTitle = "ncnnRay: Model Studio";
     InitWindow(screenWidth, screenHeight, mainTitle);
@@ -226,7 +226,7 @@ int main() {
 
         if (animate && vs.videoLoaded) {
             TraceLog(LOG_DEBUG, "TorchRaLib: Animate");
-            ImageResize(&vs.imageFrame, vs.imageFrame.width/2, vs.imageFrame.height/2);
+//            ImageResize(&vs.imageFrame, vs.imageFrame.width/2, vs.imageFrame.height/2);
             if (comboBoxActive + 1 == 1) {
 //                VU.applyModelOnImage(device, moduleMosaic, vs.imageFrame);
                 detector.detectFaces(vs.imageFrame);

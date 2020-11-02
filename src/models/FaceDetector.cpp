@@ -48,15 +48,14 @@ Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool 
 }
 
  void Detector::detectFaces(Image &img) {
-    PerfTimer timer;
+//    TIMED_SCOPE( t, "Detector::detectFaces");
+    ScopeTimer Tmr("Detector::detectFaces");
     ncnn::Mat in=rayImageToNcnn(img);
     cout << "Total:" << in.total() << endl;
     cout << "D:" << tensorDIMS(in) << endl;;
 
     vector<bbox> boxes;
-    timer.tic();
     Detect(in, boxes);
-    timer.toc("----total timer:");
     cout << "Face detections:" << boxes.size() << endl;;
     ImageDrawRectangle(&img, 5, 20, 20, 20, DARKPURPLE);
 
@@ -64,20 +63,18 @@ Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool 
         cout << "Iteration:" << j << endl;;
         auto face = boxes[j];
         Rectangle rect = {face.x1, face.y1, face.x2 - face.x1, face.y2 - face.y1};
-        ImageDrawRectangleLines(&img, rect, 5, RED);
-        ImageDrawCircleV(&img, Vector2{(float) face.x1, (float) face.y1}, 5, BLUE);
+        ImageDrawRectangleLines(&img, rect, 2, RED);
+//        ImageDrawCircleV(&img, Vector2{(float) face.x1, (float) face.y1}, 5, BLUE);
     }
 
 }
 
 void Detector::Detect(ncnn::Mat &in, std::vector<bbox>& boxes)
 {
-    PerfTimer timer;
-    timer.tic();
 //    ncnn::Mat in = ncnn::Mat::from_pixels_resize(bgr.data, ncnn::Mat::PIXEL_BGR, bgr.cols, bgr.rows, bgr.cols, bgr.rows);
+
+//    PERFORMANCE_CHECKPOINT_WITH_ID(timerFindSimilar, "Detector::Detect");
     in.substract_mean_normalize(_mean_val, 0);
-    timer.toc("normalize:");
-    timer.tic();
     ncnn::Extractor ex = Net->create_extractor();
     ex.set_light_mode(true);
     ex.set_num_threads(4);
@@ -89,14 +86,11 @@ void Detector::Detect(ncnn::Mat &in, std::vector<bbox>& boxes)
     ex.extract("530", out1);
     //landmark
     ex.extract("529", out2);
-    timer.toc("det:");
     std::vector<box> anchor;
-    timer.tic();
     if (_retinaface)
         create_anchor_retinaface(anchor,  in.w, in.h);
     else
         create_anchor(anchor,  in.w, in.h);
-    timer.toc("anchor:");
 
     std::vector<bbox > total_box;
     float *ptr = out.channel(0);

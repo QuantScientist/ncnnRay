@@ -30,6 +30,7 @@ void LFFD::detectFacesAndExportImage(const string &fileName) {
 }
 
 void LFFD::detectFacesAndDrawOnImage(Image &image) {
+    ScopeTimer Tmr("LFFD::detectFacesAndDrawOnImage");
     vector<FaceInfo> face_info;
     ncnn::Mat inmat = rayImageToNcnn(image);
     cout << "Total:" << inmat.total() << endl;
@@ -123,6 +124,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
         TraceLog(LOG_INFO, "ncnnRay: empty image");
         return -1;
     }
+    ScopeTimer Tmr("LLFFD::detect");
 
     image_h = img.h;
     image_w = img.w;
