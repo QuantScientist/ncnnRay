@@ -1,6 +1,6 @@
 #include "../include/ncnnRay.hpp"
 #include "models/FaceDetector.h"
-
+#include <omp.h>
 
 using namespace std;
 
@@ -28,36 +28,16 @@ int main(int argc, char** argv)
     ncnn::Option opt = optGPU(use_vulkan_compute, gpu_device);
     std::string model_path = ".";
     std::string fileName = "faces01.png";
-
-//    const int max_side = 320;
-
-    // slim or RFB
     Detector detector (model_path, opt, false);
-//    // scale
-    Image img = LoadImage(fileName.c_str());   // Loaded in CPU memory (RAM)
-    float long_side = std::max(img.width, img.height);
-//    float scale = max_side/long_side;
-//    ImageResize(&img, max_side, max_side);
-    detector.detectFaces(img);
+    Image img={0};
+    #pragma omp parallel for num_threads(10)
+    for (int i=0; i<10000;i++) {
+        printf("thread is %d\n", omp_get_thread_num());
+        img = LoadImage(fileName.c_str());   // Loaded in CPU memory (RAM)
+        detector.detectFaces(img);
+    }
+
     ExportImage(img, "ncnn-rgb-retina.png");
-
-    // draw image
-//    for (int j = 0; j < boxes.size(); ++j) {
-//
-//        cv::Rect rect(boxes[j].x1/scale, boxes[j].y1/scale, boxes[j].x2/scale - boxes[j].x1/scale, boxes[j].y2/scale - boxes[j].y1/scale);
-//        cv::rectangle(img, rect, cv::Scalar(0, 0, 255), 1, 8, 0);
-//        char test[80];
-//        sprintf(test, "%f", boxes[j].s);
-//
-//        cv::putText(img, test, cv::Size((boxes[j].x1/scale), boxes[j].y1/scale), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 255));
-//        cv::circle(img, cv::Point(boxes[j].point[0]._x / scale, boxes[j].point[0]._y / scale), 1, cv::Scalar(0, 0, 225), 4);
-//        cv::circle(img, cv::Point(boxes[j].point[1]._x / scale, boxes[j].point[1]._y / scale), 1, cv::Scalar(0, 255, 225), 4);
-//        cv::circle(img, cv::Point(boxes[j].point[2]._x / scale, boxes[j].point[2]._y / scale), 1, cv::Scalar(255, 0, 225), 4);
-//        cv::circle(img, cv::Point(boxes[j].point[3]._x / scale, boxes[j].point[3]._y / scale), 1, cv::Scalar(0, 255, 0), 4);
-//        cv::circle(img, cv::Point(boxes[j].point[4]._x / scale, boxes[j].point[4]._y / scale), 1, cv::Scalar(255, 0, 0), 4);
-//    }
-//    cv::imwrite("test.png", img);
-
     return 0;
 }
 

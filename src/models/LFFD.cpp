@@ -145,7 +145,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
     ex.input("data", ncnn_img);
 
     for (int i = 0; i < num_output_scales; i++) {
-        std::cout << "Scale:" << i << std::endl;
+//        std::cout << "Scale:" << i << std::endl;
         ncnn::Mat conf;
         ncnn::Mat reg;
 
