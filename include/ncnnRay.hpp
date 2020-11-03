@@ -125,14 +125,7 @@ struct ScopeTimer
 #include <emscripten/fetch.h>
 #include <emscripten/emscripten.h>
 
-static void downloadSucceeded(emscripten_fetch_t *fetch) {
-//    printf("Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
-    TraceLog(LOG_INFO, "Finished downloading %i", fetch->numBytes);
-    // The data is now available at fetch->data[0] through fetch->data[fetch->numBytes-1];
-    emscripten_fetch_close(fetch); // Free data associated with the fetch.
-}
-
-static void downloadFailed(emscripten_fetch_t *fetch) {
+static void mydownloadFailed(emscripten_fetch_t *fetch) {
     TraceLog(LOG_INFO,"Downloading %s failed, HTTP failure status code: %d.\n", fetch->url, fetch->status);
     emscripten_fetch_close(fetch); // Also free data on failure.
 }

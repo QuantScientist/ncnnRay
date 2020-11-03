@@ -148,10 +148,7 @@ int main() {
 //    nstyle2 = new NeuralStyle(model_path, model_name2, opt);
 
     lffd = new LFFD(model_path, 8, 0, opt);
-
     TraceLog(LOG_INFO, "ncnnRay: models using vulkan::%i", detector->Net->opt.use_vulkan_compute);
-
-
     // Initialization
     //--------------------------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, mainTitle);
@@ -168,69 +165,34 @@ int main() {
 //    texture = LoadTextureFromImage(image);
 
     #if EMSCRIPTEN
-    emscripten_fetch_t *fetch;
-    emscripten_fetch_attr_t attr;
-    emscripten_fetch_attr_init(&attr);
-    strcpy(attr.requestMethod, "GET");
-//    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-    attr.attributes =  EMSCRIPTEN_FETCH_PERSIST_FILE | EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-    attr.onsuccess = mydownloadSucceeded;
-    attr.onerror = mydownloadFailed;
-    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-//    emscripten_fetch(&attr, "https://cdn.knoema.com/flags/normal/tj.png");
-
-//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
-//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
-//    texture = LoadTextureFromImage(image);
-//    TraceLog(LOG_INFO, "ncnnRay: texture.width:%i", texture.width);
-
-    while (1) {
-        if (texture2->id > 0) {
-            texture=*texture2;
-            image=*image2;
-            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- texture.width:%i", texture.width);
-            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- image.width:%i", image.width);
-            break;
-        }
-//        printf("sleeping...\n");
-        emscripten_sleep(50);
-    }
-    #endif
-//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
-//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
-//    texture = LoadTextureFromImage(image);
-
-
-//    httplib:: Client cli("https://pbs.twimg.com");
+//    emscripten_fetch_t *fetch;
+//    emscripten_fetch_attr_t attr;
+//    emscripten_fetch_attr_init(&attr);
+//    strcpy(attr.requestMethod, "GET");
+////    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+//    attr.attributes =  EMSCRIPTEN_FETCH_PERSIST_FILE | EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+//    attr.onsuccess = mydownloadSucceeded;
+//    attr.onerror = mydownloadFailed;
+//    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+////    emscripten_fetch(&attr, "https://cdn.knoema.com/flags/normal/tj.png");
 //
-//    auto res = cli.Get("/media/CAoh21KWEAARhYx.png");
+////    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+////    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
+////    texture = LoadTextureFromImage(image);
+////    TraceLog(LOG_INFO, "ncnnRay: texture.width:%i", texture.width);
 //
-//    if (res) {
-//        cout << res->status << endl;
-//        cout << res->get_header_value("Content-Type") << endl;
-//         cout << res->body << endl;
+//    while (1) {
+//        if (texture2->id > 0) {
+//            texture=*texture2;
+//            image=*image2;
+//            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- texture.width:%i", texture.width);
+//            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- image.width:%i", image.width);
+//            break;
+//        }
+////        printf("sleeping...\n");
+//        emscripten_sleep(50);
 //    }
-
-////    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-//
-////    image = LoadImageFromMemory("png",  static_cast< * c_char>(attr.requestData), attr.requestDataSize);
-//    image = LoadImageFromMemory("png",  attr.requestData, attr.requestDataSize);
-//    texture = LoadTextureFromImage(image);
-//    image = LoadImage("https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-//    texture = LoadTextureFromImage(image);
-//    image = LoadImage("FILES/https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-//    texture = LoadTextureFromImage(image);
-//    image = LoadImage("CAoh21KWEAARhYx.png");
-//    texture = LoadTextureFromImage(image);
-//    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
-
-//    size_t width = image.width;
-//    size_t height = image.height;
-//    int dataSize = GetPixelDataSize(width, height, image.format);
-//    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", dataSize);
-
-//    emscripten_fetch(&attr, "http://localhost:8000/web/");
-//    #endif //
+    #endif
 
     if (texture.id > 0) {
         imageLoaded=true;
