@@ -1,2 +1,2 @@
 call "C:\v2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-cmake.exe -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - NMake Makefiles" . -B bin64 -DCMAKE_INSTALL_PREFIX=bin64 -DNCNN_VULKAN=ON  && cmake.exe --build bin64
+cmake.exe -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - NMake Makefiles" . -B bin64 -DCMAKE_INSTALL_PREFIX=bin64 -DNCNN_VULKAN=ON -DNCNN_TOOLS=ON  && cmake.exe --build bin64
