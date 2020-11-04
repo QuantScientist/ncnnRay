@@ -15,6 +15,7 @@
 #include "models/neural.h"
 #include "models/LFFD.h"
 #include "models/FaceDetector.h"
+#include "models/resnet50.h"
 
 Font gamefont;
 
@@ -49,17 +50,19 @@ int main() {
 #endif // NCNN_VULKAN
 
     ncnn::Option opt = optGPU(use_vulkan_compute, gpu_device);
-
     std::string model_path = ".";
+
+    FeatureExtractor fv(model_path, opt);
+
     std::string model_name = "candy";
     std::string model_name2 = "mosaic";
-
     NeuralStyle nstyle(model_path, model_name,  opt);
     NeuralStyle nstyle2(model_path, model_name2, opt);
 
     LFFD lffd1(model_path, 8, 0, opt);
-
     Detector detector (model_path, opt, false);
+
+
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1600;
@@ -108,6 +111,17 @@ int main() {
     float padding = 50;
     float smallPadding = 40;
     float leftPadding = 160;
+
+    std::string imgName = "faces01.png";
+    image = LoadImage(imgName.c_str());
+    texture = LoadTextureFromImage(image);
+
+    std::vector<float> feature1;
+    fv.ExtractFeature(image, &feature1);
+
+    if (texture.id > 0) {
+        imageLoaded=true;
+    }
 
     auto statusBarRect = Rectangle{0, (float)GetScreenHeight() - 28, (float)GetScreenWidth(), 28};
 //    while (!WindowShouldClose()) {
@@ -181,10 +195,13 @@ int main() {
             texture = LoadTextureFromImage(image);
         }
 
-        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "Lighter")) {
+        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "FV512")) {
 //            PlaySound(clickSound);
-            TraceLog(LOG_INFO, "ncnnRay: Lighter");
-            ImageColorBrightness(&image, +40);
+            std::vector<float> feature1;
+            fv.ExtractFeature(image, &feature1);
+
+            TraceLog(LOG_INFO, "ncnnRay: Fv512");
+//            ImageColorBrightness(&image, +40);
             texture = LoadTextureFromImage(image);
         }
 

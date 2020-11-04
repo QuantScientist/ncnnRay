@@ -249,6 +249,8 @@ if (NOT EMSCRIPTEN)
             src/models/FaceDetector.cpp
             src/models/neural.h
             src/models/neural.cpp
+            src/models/resnet50.cpp
+            src/models/resnet50.h
 #            include/easylogging/easylogging++.h
 #            include/easylogging/easylogging++.cc
             )
@@ -370,6 +372,9 @@ file(COPY "resources/GameCube.ttf" DESTINATION ${ACTUAL_DIR})
 file(COPY "resources/torch2.rgs" DESTINATION ${ACTUAL_DIR})
 file(COPY "resources/mosaic.bin" DESTINATION ${ACTUAL_DIR})
 file(COPY "resources/candy.bin" DESTINATION ${ACTUAL_DIR})
+
+file(COPY "resources/resnet50-opt.bin" DESTINATION ${ACTUAL_DIR})
+file(COPY "resources/resnet50-opt.param" DESTINATION ${ACTUAL_DIR})
 
 if (EMSCRIPTEN)
     #file(COPY "resources/ncnn.html" DESTINATION ${ACTUAL_DIR})
