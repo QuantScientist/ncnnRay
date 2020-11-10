@@ -155,7 +155,7 @@ static int tensorDIMS(const ncnn::Mat &tensor) {
 static ncnn::Option optGPU(bool use_vulkan_compute = false, int gpu_device = -1) {
     ncnn::Option opt;
     opt.lightmode = true;
-    opt.num_threads = 4;
+//    opt.num_threads = 4;
     opt.blob_allocator = &g_blob_pool_allocator;
     opt.workspace_allocator = &g_workspace_pool_allocator;
     opt.use_vulkan_compute = use_vulkan_compute;
