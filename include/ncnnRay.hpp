@@ -140,6 +140,7 @@ static bool g_enable_cooling_down = true;
 static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
 static ncnn::PoolAllocator g_workspace_pool_allocator;
 
+
 #if NCNN_VULKAN
 static ncnn::VulkanDevice *g_vkdev = 0;
 static ncnn::VkAllocator *g_blob_vkallocator = 0;

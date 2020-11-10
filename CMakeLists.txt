@@ -373,8 +373,8 @@ file(COPY "resources/torch2.rgs" DESTINATION ${ACTUAL_DIR})
 file(COPY "resources/mosaic.bin" DESTINATION ${ACTUAL_DIR})
 file(COPY "resources/candy.bin" DESTINATION ${ACTUAL_DIR})
 
-file(COPY "resources/resnet50-opt.bin" DESTINATION ${ACTUAL_DIR})
-file(COPY "resources/resnet50-opt.param" DESTINATION ${ACTUAL_DIR})
+#file(COPY "resources/resnet50-opt.bin" DESTINATION ${ACTUAL_DIR})
+#file(COPY "resources/resnet50-opt.param" DESTINATION ${ACTUAL_DIR})
 
 if (EMSCRIPTEN)
     #file(COPY "resources/ncnn.html" DESTINATION ${ACTUAL_DIR})

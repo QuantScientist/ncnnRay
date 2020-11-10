@@ -50,6 +50,7 @@ void LFFD::detectFacesAndDrawOnImage(Image &image) {
     }
 }
 
+
 LFFD::LFFD(const std::string &model_path, int scale_num, int num_thread_,
            const ncnn::Option &opt) {
     net.opt = opt;
