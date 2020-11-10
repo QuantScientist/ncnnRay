@@ -141,7 +141,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
     ncnn::Extractor ex = net.create_extractor();
 
 //    ex.set_vulkan_compute(true);
-    ex.set_num_threads(num_thread);
+//    ex.set_num_threads(num_thread);
     ex.input("data", ncnn_img);
 
     for (int i = 0; i < num_output_scales; i++) {
