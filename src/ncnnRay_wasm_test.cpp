@@ -160,9 +160,9 @@ int main() {
     Font font = LoadFontEx("GameCube.ttf", 18, 0, 0);
     GuiSetFont(font);
 
-//    std::string fileName = "faces01.png";
-//    image = LoadImage(fileName.c_str());
-//    texture = LoadTextureFromImage(image);
+    std::string fileName = "faces01.png";
+    image = LoadImage(fileName.c_str());
+    texture = LoadTextureFromImage(image);
 
     #if EMSCRIPTEN
 //    emscripten_fetch_t *fetch;
