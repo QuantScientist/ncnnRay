@@ -23,7 +23,8 @@
 
 # About
 
-A live WebAssembly demo is available here: https://quantscientist.github.io/ncnnRay/
+## A live WebAssembly / HTML5 browser demo is available here: 
+- https://quantscientist.github.io/ncnnRay/
 
 <h1 align="center">    
   <img src="https://github.com/QuantScientist/ncnnRay/blob/main/assets/manga.png.exp.png?raw=true" width="55%"></a>  
