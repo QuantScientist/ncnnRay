@@ -46,13 +46,14 @@ int main() {
 
         g_blob_vkallocator->clear();
         g_staging_vkallocator->clear();
+
+        int max_batch_size = g_vkdev->info.compute_queue_count;
+        TraceLog(LOG_INFO, "ncnnRay: max_batch_size=%i", max_batch_size);
     }
 #endif // NCNN_VULKAN
 
     ncnn::Option opt = optGPU(use_vulkan_compute, gpu_device);
     std::string model_path = ".";
-
-    FeatureExtractor fv(model_path, opt);
 
     std::string model_name = "candy";
     std::string model_name2 = "mosaic";
@@ -112,12 +113,22 @@ int main() {
     float smallPadding = 40;
     float leftPadding = 160;
 
-    std::string imgName = "faces01.png";
+    std::string imgName = "faces.png";
     image = LoadImage(imgName.c_str());
     texture = LoadTextureFromImage(image);
 
-    std::vector<float> feature1;
-    fv.ExtractFeature(image, &feature1);
+//    std::vector<float> feature1;
+
+//    std::string model_fv_name= "mobilefacenets";
+//    std::string model_fv_name= "resnet50-opt";
+//    FeatureExtractor fv(model_path,model_fv_name , opt);
+////    auto x1=fv.ExtractFeature(image,"data","fc1");
+//    auto x1=fv.ExtractFeature(image,"input.1","652");
+//    ImageResize(&image,512,512);
+//    auto x2=fv.ExtractFeature(image,"input.1","652");
+//
+//    TraceLog(LOG_INFO, "ncnnRay: vec sim 0 =%f", fv.calculateSimilarity(x1,x2));
+//    TraceLog(LOG_INFO, "ncnnRay: vec sim 1 =%f", fv.getSimilarity(x1,x2));
 
     if (texture.id > 0) {
         imageLoaded=true;
@@ -194,16 +205,15 @@ int main() {
             //ImageColorBrightness(&image, -40);
             texture = LoadTextureFromImage(image);
         }
-
-        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "FV512")) {
-//            PlaySound(clickSound);
-            std::vector<float> feature1;
-            fv.ExtractFeature(image, &feature1);
-
-            TraceLog(LOG_INFO, "ncnnRay: Fv512");
-//            ImageColorBrightness(&image, +40);
-            texture = LoadTextureFromImage(image);
-        }
+//
+//        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "FV512")) {
+////            PlaySound(clickSound);
+////            auto x=fv.ExtractFeature(image,"data","fc1");
+//            auto x=fv.ExtractFeature(image,"input.1","652");
+//            TraceLog(LOG_INFO, "ncnnRay: Fv %d", x.size());
+////            ImageColorBrightness(&image, +40);
+//            texture = LoadTextureFromImage(image);
+//        }
 
         //        GuiSetTooltip("Set the random seed.");
         randomSeed = GuiSlider(Rectangle{ screenWidth - leftPadding,screenHeight - smallPadding - 7*padding, buttonWidth/2, 15},

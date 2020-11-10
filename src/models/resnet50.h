@@ -9,17 +9,14 @@ class FeatureExtractor{
 public:
     FeatureExtractor();
 	~FeatureExtractor();
-    FeatureExtractor(const std::string &model_path,const ncnn::Option &opt);
-
-//	int ExtractFeature(const Image& img_face, std::vector<float>* feature);
+    FeatureExtractor(const std::string &model_path,const std::string &model_name,const ncnn::Option &opt);
     void normalize(std::vector<float>& arr);
-    int ExtractFeature(Image  &image,std::vector<float>* feature);
-    double getSimilarity(const std::vector<float>& v1, const std::vector<float>& v2);
+    std::vector<float> ExtractFeature(Image  &image, const std::string &in_name, const std::string &out_name);
+    float getSimilarity(const std::vector<float>& v1, const std::vector<float>& v2);
+    float calculateSimilarity(const std::vector<float>& feat1, const std::vector<float>& feat2);
 
 private:
 	ncnn::Net net;
-    int kFeatureDim=2048;
-    std::string prefix="mobilefacenets"; //resnet50-opt
 };
 
 

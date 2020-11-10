@@ -145,8 +145,21 @@ static ncnn::VulkanDevice *g_vkdev = 0;
 static ncnn::VkAllocator *g_blob_vkallocator = 0;
 static ncnn::VkAllocator *g_staging_vkallocator = 0;
 #endif // NCNN_VULKAN
+
+#if NCNN_VULKAN
+//static {
+//g_vkdev = ncnn::get_gpu_device(gpu_device);
+//g_blob_vkallocator = new ncnn::VkBlobAllocator(g_vkdev);
+//g_staging_vkallocator = new ncnn::VkStagingAllocator(g_vkdev);
+//
+//g_blob_vkallocator->clear();
+//g_staging_vkallocator->clear();
+//}
+#endif // NCNN_VULKAN
+
 using namespace std;
 using namespace std::chrono;
+
 
 static int tensorDIMS(const ncnn::Mat &tensor) {
     return tensor.dims;
