@@ -4,8 +4,7 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     bool use_vulkan_compute = true;
     int gpu_device = 0;
 
@@ -28,10 +27,10 @@ int main(int argc, char** argv)
     ncnn::Option opt = optGPU(use_vulkan_compute, gpu_device);
     std::string model_path = ".";
     std::string fileName = "faces01.png";
-    Detector detector (model_path, opt, false);
-    Image img={0};
-    #pragma omp parallel for num_threads(10)
-    for (int i=0; i<10000;i++) {
+    Detector detector(model_path, opt, false);
+    Image img = {0};
+#pragma omp parallel for num_threads(10)
+    for (int i = 0; i < 10000; i++) {
         printf("thread is %d\n", omp_get_thread_num());
         img = LoadImage(fileName.c_str());   // Loaded in CPU memory (RAM)
         detector.detectFaces(img);

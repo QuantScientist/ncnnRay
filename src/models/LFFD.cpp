@@ -5,7 +5,7 @@ using namespace std;
 
 void LFFD::detectFacesAndExportImage(const string &fileName) {
     Image image = LoadImage(fileName.c_str());   // Loaded in CPU memory (RAM)
-    vector<FaceInfo> face_info;
+    vector <FaceInfo> face_info;
     ncnn::Mat inmat = rayImageToNcnn(image);
     cout << "Total:" << inmat.total() << endl;
     cout << "D:" << tensorDIMS(inmat) << endl;;
@@ -31,7 +31,7 @@ void LFFD::detectFacesAndExportImage(const string &fileName) {
 
 void LFFD::detectFacesAndDrawOnImage(Image &image) {
     ScopeTimer Tmr("LFFD::detectFacesAndDrawOnImage");
-    vector<FaceInfo> face_info;
+    vector <FaceInfo> face_info;
     ncnn::Mat inmat = rayImageToNcnn(image);
     cout << "Total:" << inmat.total() << endl;
     cout << "D:" << tensorDIMS(inmat) << endl;;
@@ -118,7 +118,7 @@ LFFD::~LFFD() {
 
 LFFD::LFFD() {};
 
-int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h, int resize_w,
+int LFFD::detect(ncnn::Mat &img, std::vector <FaceInfo> &face_list, int resize_h, int resize_w,
                  float score_threshold, float nms_threshold, int top_k, std::vector<int> skip_scale_branch_list) {
 
     if (img.empty()) {
@@ -138,7 +138,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
     ncnn::Mat ncnn_img = in;
     ncnn_img.substract_mean_normalize(mean_vals, norm_vals);
 
-    std::vector<FaceInfo> bbox_collection;
+    std::vector <FaceInfo> bbox_collection;
     ncnn::Extractor ex = net.create_extractor();
 
 //    ex.set_vulkan_compute(true);
@@ -155,7 +155,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
 
         generateBBox(bbox_collection, conf, reg, score_threshold, conf.w, conf.h, in.w, in.h, i);
     }
-    std::vector<FaceInfo> valid_input;
+    std::vector <FaceInfo> valid_input;
     get_topk_bbox(bbox_collection, valid_input, top_k);
     nms(valid_input, face_list, nms_threshold);
 
@@ -182,7 +182,7 @@ int LFFD::detect(ncnn::Mat &img, std::vector<FaceInfo> &face_list, int resize_h,
     return 0;
 }
 
-void LFFD::generateBBox(std::vector<FaceInfo> &bbox_collection, ncnn::Mat score_map, ncnn::Mat box_map,
+void LFFD::generateBBox(std::vector <FaceInfo> &bbox_collection, ncnn::Mat score_map, ncnn::Mat box_map,
                         float score_threshold, int fea_w, int fea_h, int cols, int rows, int scale_id) {
     float *RF_center_Xs = new float[fea_w];
     float *RF_center_Xs_mat = new float[fea_w * fea_h];
@@ -265,7 +265,7 @@ void LFFD::generateBBox(std::vector<FaceInfo> &bbox_collection, ncnn::Mat score_
     y_rb_mat = NULL;
 }
 
-void LFFD::get_topk_bbox(std::vector<FaceInfo> &input, std::vector<FaceInfo> &output, int top_k) {
+void LFFD::get_topk_bbox(std::vector <FaceInfo> &input, std::vector <FaceInfo> &output, int top_k) {
     std::sort(input.begin(), input.end(),
               [](const FaceInfo &a, const FaceInfo &b) {
                   return a.score > b.score;
@@ -280,7 +280,7 @@ void LFFD::get_topk_bbox(std::vector<FaceInfo> &input, std::vector<FaceInfo> &ou
     }
 }
 
-void LFFD::nms(std::vector<FaceInfo> &input, std::vector<FaceInfo> &output, float threshold, int type) {
+void LFFD::nms(std::vector <FaceInfo> &input, std::vector <FaceInfo> &output, float threshold, int type) {
     if (input.empty())
         return;
 

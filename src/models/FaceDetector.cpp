@@ -3,39 +3,36 @@
 #include <algorithm>
 //#include "omp.h"
 
-Detector::Detector():
+Detector::Detector() :
         _nms(0.4),
         _threshold(0.6),
         _mean_val{104.f, 117.f, 123.f},
         _retinaface(false),
-        Net(new ncnn::Net())
-{
+        Net(new ncnn::Net()) {
 }
 
-inline void Detector::Release(){
-    if (Net != nullptr)
-    {
+inline void Detector::Release() {
+    if (Net != nullptr) {
         delete Net;
         Net = nullptr;
     }
 }
 
-Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool retinaface):
+Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool retinaface) :
         _nms(0.4),
         _threshold(0.6),
         _mean_val{104.f, 117.f, 123.f},
         _retinaface(retinaface),
-        Net(new ncnn::Net())
-{
-	
-	
-    #if NCNN_VULKAN
-	Net->opt.use_vulkan_compute=true;
+        Net(new ncnn::Net()) {
+
+
+#if NCNN_VULKAN
+    Net->opt.use_vulkan_compute=true;
     if (Net->opt.use_vulkan_compute) {
         TraceLog(LOG_INFO, "ncnnRay: Detector opt using vulkan::%i", Net->opt.use_vulkan_compute);
         Net->set_vulkan_device(g_vkdev);
     }
-    #endif // NCNN_VULKAN
+#endif // NCNN_VULKAN
 
 
     std::string param = model_path + "/retinaface.param";
@@ -47,14 +44,14 @@ Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool 
 
 }
 
- void Detector::detectFaces(Image &img) {
+void Detector::detectFaces(Image &img) {
 //    TIMED_SCOPE( t, "Detector::detectFaces");
     ScopeTimer Tmr("Detector::detectFaces");
-    ncnn::Mat in=rayImageToNcnn(img);
+    ncnn::Mat in = rayImageToNcnn(img);
     cout << "Total:" << in.total() << endl;
     cout << "D:" << tensorDIMS(in) << endl;;
 
-    vector<bbox> boxes;
+    vector <bbox> boxes;
     Detect(in, boxes);
     cout << "Face detections:" << boxes.size() << endl;;
     ImageDrawRectangle(&img, 5, 20, 20, 20, DARKPURPLE);
@@ -69,8 +66,7 @@ Detector::Detector(const std::string &model_path, const ncnn::Option &opt, bool 
 
 }
 
-void Detector::Detect(ncnn::Mat &in, std::vector<bbox>& boxes)
-{
+void Detector::Detect(ncnn::Mat &in, std::vector <bbox> &boxes) {
 //    ncnn::Mat in = ncnn::Mat::from_pixels_resize(bgr.data, ncnn::Mat::PIXEL_BGR, bgr.cols, bgr.rows, bgr.cols, bgr.rows);
 
 //    PERFORMANCE_CHECKPOINT_WITH_ID(timerFindSimilar, "Detector::Detect");
@@ -86,51 +82,48 @@ void Detector::Detect(ncnn::Mat &in, std::vector<bbox>& boxes)
     ex.extract("530", out1);
     //landmark
     ex.extract("529", out2);
-    std::vector<box> anchor;
+    std::vector <box> anchor;
     if (_retinaface)
-        create_anchor_retinaface(anchor,  in.w, in.h);
+        create_anchor_retinaface(anchor, in.w, in.h);
     else
-        create_anchor(anchor,  in.w, in.h);
+        create_anchor(anchor, in.w, in.h);
 
-    std::vector<bbox > total_box;
+    std::vector <bbox> total_box;
     float *ptr = out.channel(0);
     float *ptr1 = out1.channel(0);
     float *landms = out2.channel(0);
 
     // #pragma omp parallel for num_threads(2)
-    for (int i = 0; i < anchor.size(); ++i)
-    {
-        if (*(ptr1+1) > _threshold)
-        {
+    for (int i = 0; i < anchor.size(); ++i) {
+        if (*(ptr1 + 1) > _threshold) {
             box tmp = anchor[i];
             box tmp1;
             bbox result;
 
             // loc and conf
             tmp1.cx = tmp.cx + *ptr * 0.1 * tmp.sx;
-            tmp1.cy = tmp.cy + *(ptr+1) * 0.1 * tmp.sy;
-            tmp1.sx = tmp.sx * exp(*(ptr+2) * 0.2);
-            tmp1.sy = tmp.sy * exp(*(ptr+3) * 0.2);
+            tmp1.cy = tmp.cy + *(ptr + 1) * 0.1 * tmp.sy;
+            tmp1.sx = tmp.sx * exp(*(ptr + 2) * 0.2);
+            tmp1.sy = tmp.sy * exp(*(ptr + 3) * 0.2);
 
-            result.x1 = (tmp1.cx - tmp1.sx/2) * in.w;
-            if (result.x1<0)
+            result.x1 = (tmp1.cx - tmp1.sx / 2) * in.w;
+            if (result.x1 < 0)
                 result.x1 = 0;
-            result.y1 = (tmp1.cy - tmp1.sy/2) * in.h;
-            if (result.y1<0)
+            result.y1 = (tmp1.cy - tmp1.sy / 2) * in.h;
+            if (result.y1 < 0)
                 result.y1 = 0;
-            result.x2 = (tmp1.cx + tmp1.sx/2) * in.w;
-            if (result.x2>in.w)
+            result.x2 = (tmp1.cx + tmp1.sx / 2) * in.w;
+            if (result.x2 > in.w)
                 result.x2 = in.w;
-            result.y2 = (tmp1.cy + tmp1.sy/2)* in.h;
-            if (result.y2>in.h)
+            result.y2 = (tmp1.cy + tmp1.sy / 2) * in.h;
+            if (result.y2 > in.h)
                 result.y2 = in.h;
             result.s = *(ptr1 + 1);
 
             // landmark
-            for (int j = 0; j < 5; ++j)
-            {
-                result.point[j]._x =( tmp.cx + *(landms + (j<<1)) * 0.1 * tmp.sx ) * in.w;
-                result.point[j]._y =( tmp.cy + *(landms + (j<<1) + 1) * 0.1 * tmp.sy ) * in.h;
+            for (int j = 0; j < 5; ++j) {
+                result.point[j]._x = (tmp.cx + *(landms + (j << 1)) * 0.1 * tmp.sx) * in.w;
+                result.point[j]._y = (tmp.cy + *(landms + (j << 1) + 1) * 0.1 * tmp.sy) * in.h;
             }
 
             total_box.push_back(result);
@@ -142,10 +135,9 @@ void Detector::Detect(ncnn::Mat &in, std::vector<bbox>& boxes)
 
     std::sort(total_box.begin(), total_box.end(), cmp);
     nms(total_box, _nms);
-    printf("%d\n", (int)total_box.size());
+    printf("%d\n", (int) total_box.size());
 
-    for (int j = 0; j < total_box.size(); ++j)
-    {
+    for (int j = 0; j < total_box.size(); ++j) {
         boxes.push_back(total_box[j]);
     }
 }
@@ -156,7 +148,7 @@ inline bool Detector::cmp(bbox a, bbox b) {
     return false;
 }
 
-inline void Detector::SetDefaultParams(){
+inline void Detector::SetDefaultParams() {
     _nms = 0.4;
     _threshold = 0.6;
     _mean_val[0] = 104;
@@ -166,19 +158,18 @@ inline void Detector::SetDefaultParams(){
 
 }
 
-Detector::~Detector(){
+Detector::~Detector() {
     Release();
 }
 
-void Detector::create_anchor(std::vector<box> &anchor, int w, int h)
-{
+void Detector::create_anchor(std::vector <box> &anchor, int w, int h) {
 //    anchor.reserve(num_boxes);
     anchor.clear();
-    std::vector<std::vector<int> > feature_map(4), min_sizes(4);
+    std::vector <std::vector<int>> feature_map(4), min_sizes(4);
     float steps[] = {8, 16, 32, 64};
     for (int i = 0; i < feature_map.size(); ++i) {
-        feature_map[i].push_back(ceil(h/steps[i]));
-        feature_map[i].push_back(ceil(w/steps[i]));
+        feature_map[i].push_back(ceil(h / steps[i]));
+        feature_map[i].push_back(ceil(w / steps[i]));
     }
     std::vector<int> minsize1 = {10, 16, 24};
     min_sizes[0] = minsize1;
@@ -190,19 +181,15 @@ void Detector::create_anchor(std::vector<box> &anchor, int w, int h)
     min_sizes[3] = minsize4;
 
 
-    for (int k = 0; k < feature_map.size(); ++k)
-    {
+    for (int k = 0; k < feature_map.size(); ++k) {
         std::vector<int> min_size = min_sizes[k];
-        for (int i = 0; i < feature_map[k][0]; ++i)
-        {
-            for (int j = 0; j < feature_map[k][1]; ++j)
-            {
-                for (int l = 0; l < min_size.size(); ++l)
-                {
-                    float s_kx = min_size[l]*1.0/w;
-                    float s_ky = min_size[l]*1.0/h;
-                    float cx = (j + 0.5) * steps[k]/w;
-                    float cy = (i + 0.5) * steps[k]/h;
+        for (int i = 0; i < feature_map[k][0]; ++i) {
+            for (int j = 0; j < feature_map[k][1]; ++j) {
+                for (int l = 0; l < min_size.size(); ++l) {
+                    float s_kx = min_size[l] * 1.0 / w;
+                    float s_ky = min_size[l] * 1.0 / h;
+                    float cx = (j + 0.5) * steps[k] / w;
+                    float cy = (i + 0.5) * steps[k] / h;
                     box axil = {cx, cy, s_kx, s_ky};
                     anchor.push_back(axil);
                 }
@@ -213,15 +200,14 @@ void Detector::create_anchor(std::vector<box> &anchor, int w, int h)
 
 }
 
-void Detector::create_anchor_retinaface(std::vector<box> &anchor, int w, int h)
-{
+void Detector::create_anchor_retinaface(std::vector <box> &anchor, int w, int h) {
 //    anchor.reserve(num_boxes);
     anchor.clear();
-    std::vector<std::vector<int> > feature_map(3), min_sizes(3);
+    std::vector <std::vector<int>> feature_map(3), min_sizes(3);
     float steps[] = {8, 16, 32};
     for (int i = 0; i < feature_map.size(); ++i) {
-        feature_map[i].push_back(ceil(h/steps[i]));
-        feature_map[i].push_back(ceil(w/steps[i]));
+        feature_map[i].push_back(ceil(h / steps[i]));
+        feature_map[i].push_back(ceil(w / steps[i]));
     }
     std::vector<int> minsize1 = {10, 20};
     min_sizes[0] = minsize1;
@@ -230,19 +216,15 @@ void Detector::create_anchor_retinaface(std::vector<box> &anchor, int w, int h)
     std::vector<int> minsize3 = {128, 256};
     min_sizes[2] = minsize3;
 
-    for (int k = 0; k < feature_map.size(); ++k)
-    {
+    for (int k = 0; k < feature_map.size(); ++k) {
         std::vector<int> min_size = min_sizes[k];
-        for (int i = 0; i < feature_map[k][0]; ++i)
-        {
-            for (int j = 0; j < feature_map[k][1]; ++j)
-            {
-                for (int l = 0; l < min_size.size(); ++l)
-                {
-                    float s_kx = min_size[l]*1.0/w;
-                    float s_ky = min_size[l]*1.0/h;
-                    float cx = (j + 0.5) * steps[k]/w;
-                    float cy = (i + 0.5) * steps[k]/h;
+        for (int i = 0; i < feature_map[k][0]; ++i) {
+            for (int j = 0; j < feature_map[k][1]; ++j) {
+                for (int l = 0; l < min_size.size(); ++l) {
+                    float s_kx = min_size[l] * 1.0 / w;
+                    float s_ky = min_size[l] * 1.0 / h;
+                    float cx = (j + 0.5) * steps[k] / w;
+                    float cy = (i + 0.5) * steps[k] / h;
                     box axil = {cx, cy, s_kx, s_ky};
                     anchor.push_back(axil);
                 }
@@ -253,33 +235,26 @@ void Detector::create_anchor_retinaface(std::vector<box> &anchor, int w, int h)
 
 }
 
-void Detector::nms(std::vector<bbox> &input_boxes, float NMS_THRESH)
-{
-    std::vector<float>vArea(input_boxes.size());
-    for (int i = 0; i < int(input_boxes.size()); ++i)
-    {
+void Detector::nms(std::vector <bbox> &input_boxes, float NMS_THRESH) {
+    std::vector<float> vArea(input_boxes.size());
+    for (int i = 0; i < int(input_boxes.size()); ++i) {
         vArea[i] = (input_boxes.at(i).x2 - input_boxes.at(i).x1 + 1)
                    * (input_boxes.at(i).y2 - input_boxes.at(i).y1 + 1);
     }
-    for (int i = 0; i < int(input_boxes.size()); ++i)
-    {
-        for (int j = i + 1; j < int(input_boxes.size());)
-        {
+    for (int i = 0; i < int(input_boxes.size()); ++i) {
+        for (int j = i + 1; j < int(input_boxes.size());) {
             float xx1 = std::max(input_boxes[i].x1, input_boxes[j].x1);
             float yy1 = std::max(input_boxes[i].y1, input_boxes[j].y1);
             float xx2 = std::min(input_boxes[i].x2, input_boxes[j].x2);
             float yy2 = std::min(input_boxes[i].y2, input_boxes[j].y2);
             float w = std::max(float(0), xx2 - xx1 + 1);
-            float   h = std::max(float(0), yy2 - yy1 + 1);
-            float   inter = w * h;
+            float h = std::max(float(0), yy2 - yy1 + 1);
+            float inter = w * h;
             float ovr = inter / (vArea[i] + vArea[j] - inter);
-            if (ovr >= NMS_THRESH)
-            {
+            if (ovr >= NMS_THRESH) {
                 input_boxes.erase(input_boxes.begin() + j);
                 vArea.erase(vArea.begin() + j);
-            }
-            else
-            {
+            } else {
                 j++;
             }
         }

@@ -5,12 +5,12 @@
 FeatureExtractor::FeatureExtractor() {}
 
 FeatureExtractor::~FeatureExtractor() {
-	net.clear();
+    net.clear();
 }
 
 FeatureExtractor::FeatureExtractor(const std::string &model_path,
                                    const std::string &model_name,
-                         const ncnn::Option &opt
+                                   const ncnn::Option &opt
 ) {
     net.opt = opt;
 #if NCNN_VULKAN
@@ -27,8 +27,8 @@ FeatureExtractor::FeatureExtractor(const std::string &model_path,
     ncnn::VkMat blob_gpu;
 }
 
-std::vector<float> FeatureExtractor::ExtractFeature(Image  &image,
-        const std::string &in_name, const std::string &out_name) {
+std::vector<float> FeatureExtractor::ExtractFeature(Image &image,
+                                                    const std::string &in_name, const std::string &out_name) {
     ScopeTimer Tmr("FeatureExtractor::ExtractFeature");
 
     ncnn::Mat in = rayImageToNcnn(image);
@@ -38,7 +38,7 @@ std::vector<float> FeatureExtractor::ExtractFeature(Image  &image,
 //    const float mean_vals[3] = { 0.f, 0.f, 0.f };
 //    const float norm_vals[3] = { 1.0 / 255, 1.0 / 255, 1.0 / 255 };
 //    in.substract_mean_normalize(mean_vals, norm_vals);
-	ncnn::Extractor ex = net.create_extractor();
+    ncnn::Extractor ex = net.create_extractor();
 //    #pragma omp parallel sections + #pragma omp section
 //    #pragma omp parallel for num_threads(8)
 //    for (int i=0; i<100; i++)
@@ -48,14 +48,14 @@ std::vector<float> FeatureExtractor::ExtractFeature(Image  &image,
 //        ex.extract("prob", outputs[i]);
 //    }
 
-	ex.input(in_name.c_str(), in); // "input.1"
-	ncnn::Mat out;
-	ex.extract(out_name.c_str(), out); // Convolution Conv_116 1 1 488 652 0=2048 1=1 5=1
+    ex.input(in_name.c_str(), in); // "input.1"
+    ncnn::Mat out;
+    ex.extract(out_name.c_str(), out); // Convolution Conv_116 1 1 488 652 0=2048 1=1 5=1
 //    out = out.channel(0);
-	TraceLog(LOG_INFO, "ncnnRay: out.c =%d", out.c);
+    TraceLog(LOG_INFO, "ncnnRay: out.c =%d", out.c);
     std::vector<float> vec;
     for (int i = 0; i < out.c; ++i) {
-        vec.emplace_back(*(static_cast<float*>(out.data) + i));
+        vec.emplace_back(*(static_cast<float *>(out.data) + i));
     }
 //    out=out.channel(0).reshape(2048);
 //    std::vector<float> vec(2048);
@@ -63,10 +63,10 @@ std::vector<float> FeatureExtractor::ExtractFeature(Image  &image,
 
     TraceLog(LOG_INFO, "ncnnRay: vec =%d", vec.size());
     normalize(vec);
-	return vec;
+    return vec;
 }
 
-void FeatureExtractor::normalize(std::vector<float>& arr) {
+void FeatureExtractor::normalize(std::vector<float> &arr) {
     double mod = 0.0;
     for (float i : arr) {
         mod += i * i;
@@ -75,12 +75,12 @@ void FeatureExtractor::normalize(std::vector<float>& arr) {
     if (mag == 0) {
         throw std::logic_error("The input vector is a zero vector");
     }
-    for (float & i : arr) {
+    for (float &i : arr) {
         i /= mag;
     }
 }
 
-float FeatureExtractor::getSimilarity(const std::vector<float>& v1, const std::vector<float>& v2) {
+float FeatureExtractor::getSimilarity(const std::vector<float> &v1, const std::vector<float> &v2) {
     if (v1.size() != v2.size())
         throw std::invalid_argument("Wrong size");
 
@@ -95,7 +95,7 @@ float FeatureExtractor::getSimilarity(const std::vector<float>& v1, const std::v
     return mul;
 }
 
-float FeatureExtractor::calculateSimilarity(const std::vector<float>& feat1, const std::vector<float>& feat2) {
+float FeatureExtractor::calculateSimilarity(const std::vector<float> &feat1, const std::vector<float> &feat2) {
     double dot = 0;
     double norm1 = 0;
     double norm2 = 0;

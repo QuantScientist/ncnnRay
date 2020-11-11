@@ -88,7 +88,7 @@ int pixelFormatActive = 0;
 const char *pixelFormatTextList[1] = {"RGB"};
 bool textBoxEditMode = false;
 
-bool badFileExt=false;
+bool badFileExt = false;
 
 #if EMSCRIPTEN
 void mydownloadSucceeded(emscripten_fetch_t *fetch) {
@@ -164,38 +164,38 @@ int main() {
     image = LoadImage(fileName.c_str());
     texture = LoadTextureFromImage(image);
 
-    #if EMSCRIPTEN
-//    emscripten_fetch_t *fetch;
-//    emscripten_fetch_attr_t attr;
-//    emscripten_fetch_attr_init(&attr);
-//    strcpy(attr.requestMethod, "GET");
-////    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-//    attr.attributes =  EMSCRIPTEN_FETCH_PERSIST_FILE | EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-//    attr.onsuccess = mydownloadSucceeded;
-//    attr.onerror = mydownloadFailed;
-//    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
-////    emscripten_fetch(&attr, "https://cdn.knoema.com/flags/normal/tj.png");
-//
-////    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
-////    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
-////    texture = LoadTextureFromImage(image);
-////    TraceLog(LOG_INFO, "ncnnRay: texture.width:%i", texture.width);
-//
-//    while (1) {
-//        if (texture2->id > 0) {
-//            texture=*texture2;
-//            image=*image2;
-//            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- texture.width:%i", texture.width);
-//            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- image.width:%i", image.width);
-//            break;
-//        }
-////        printf("sleeping...\n");
-//        emscripten_sleep(50);
-//    }
-    #endif
+#if EMSCRIPTEN
+    //    emscripten_fetch_t *fetch;
+    //    emscripten_fetch_attr_t attr;
+    //    emscripten_fetch_attr_init(&attr);
+    //    strcpy(attr.requestMethod, "GET");
+    ////    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+    //    attr.attributes =  EMSCRIPTEN_FETCH_PERSIST_FILE | EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+    //    attr.onsuccess = mydownloadSucceeded;
+    //    attr.onerror = mydownloadFailed;
+    //    emscripten_fetch(&attr, "https://pbs.twimg.com/media/CAoh21KWEAARhYx.png");
+    ////    emscripten_fetch(&attr, "https://cdn.knoema.com/flags/normal/tj.png");
+    //
+    ////    image = LoadImageFromMemory("png",  fetch->data, fetch->totalBytes);
+    ////    TraceLog(LOG_INFO, "ncnnRay: total image pixels:%i", fetch->totalBytes);
+    ////    texture = LoadTextureFromImage(image);
+    ////    TraceLog(LOG_INFO, "ncnnRay: texture.width:%i", texture.width);
+    //
+    //    while (1) {
+    //        if (texture2->id > 0) {
+    //            texture=*texture2;
+    //            image=*image2;
+    //            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- texture.width:%i", texture.width);
+    //            TraceLog(LOG_INFO, "ncnnRay: asyncg PNG download completed- image.width:%i", image.width);
+    //            break;
+    //        }
+    ////        printf("sleeping...\n");
+    //        emscripten_sleep(50);
+    //    }
+#endif
 
     if (texture.id > 0) {
-        imageLoaded=true;
+        imageLoaded = true;
     }
 
 //    GuiPanel(Rectangle{0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()});
@@ -294,7 +294,9 @@ void UpdateDrawFrame(void) {
         texture = LoadTextureFromImage(image);
     }
 
-    if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 10 * padding, buttonWidth, buttonHeight},"SAVE")) {
+    if (GuiButton(
+            Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 10 * padding, buttonWidth, buttonHeight},
+            "SAVE")) {
 //        PlaySound(saveImageSound);
         TraceLog(LOG_INFO, "ncnnRay: save image");
         windowBoxActive = true;
@@ -327,7 +329,7 @@ void UpdateDrawFrame(void) {
         DrawRectangle(0, 0, screenWidth, screenHeight,
                       Fade(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)), 0.75f));
         GuiWindowBox(Rectangle{windowBoxRec.x, windowBoxRec.y, 330, 100},
-                                        "Warning.");
+                     "Warning.");
 //        badFileExt=false;
         GuiLabel(Rectangle{windowBoxRec.x + 10, windowBoxRec.y + 35, 300, 25}, "Only PNG files are supported.");
 //        fileFormatActive = GuiComboBox(Rectangle{windowBoxRec.x + 80, windowBoxRec.y + 35, 130, 25},
@@ -369,7 +371,7 @@ void handleDroppedFiles(const int screenWidth, const int screenHeight, Image &im
 
         if (fileCount == 1) {
             if (IsFileExtension(droppedFiles[0], ".png")) {
-                badFileExt=false;
+                badFileExt = false;
                 TraceLog(LOG_INFO, "ncnnRay: image");
                 Image imTemp = LoadImage(droppedFiles[0]);
                 if (imTemp.data != nullptr) {
@@ -382,9 +384,8 @@ void handleDroppedFiles(const int screenWidth, const int screenHeight, Image &im
                         imageScale = (float) (screenHeight - 100) / (float) texture.height;
                     else imageScale = (float) (screenWidth - 100) / (float) texture.width;
                 }
-            }
-            else{
-                badFileExt=true;
+            } else {
+                badFileExt = true;
             }
         }
 
@@ -400,11 +401,11 @@ void handleExport(char *fileName, const Image &image, bool imageLoaded, bool btn
             if ((GetExtension(fileName) == nullptr) || (!IsFileExtension(fileName, ".png")))
                 strcat(fileName, ".png\0");     // No extension provided
             ExportImage(image, fileName);
-            #if defined(EMSCRIPTEN)
-                        // Download file from MEMFS (emscripten memory filesystem)
-                // saveFileFromMEMFSToDisk() function is defined in raylib/src/shell.html
-                emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", GetFileName(fileName), GetFileName(fileName)));
-            #endif
+#if defined(EMSCRIPTEN)
+            // Download file from MEMFS (emscripten memory filesystem)
+    // saveFileFromMEMFSToDisk() function is defined in raylib/src/shell.html
+    emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", GetFileName(fileName), GetFileName(fileName)));
+#endif
             UnloadTexture(texture);
             texture = LoadTextureFromImage(image);
         }

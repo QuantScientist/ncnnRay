@@ -14,7 +14,7 @@ NeuralStyle::NeuralStyle(const std::string &model_path,
         TraceLog(LOG_INFO, "ncnnRay: Opt using vulkan::%i", net.opt.use_vulkan_compute);
         net.set_vulkan_device(g_vkdev);
     }
-    #endif // NCNN_VULKAN
+#endif // NCNN_VULKAN
 
     std::string bin = model_path + "/" + model_name + ".bin";
     net.load_param(styletransfer_param_bin);
@@ -48,12 +48,12 @@ ncnn::Mat NeuralStyle::transform(ncnn::Mat &in) {
     {
         ncnn::Extractor ex = net.create_extractor();
 #if NCNN_VULKAN
-//        if (net.opt.use_vulkan_compute)
-//        {
-//            net.set_vulkan_device(g_vkdev);
-//            ex.set_vulkan_compute(true);
-//            std::cout<< "ex using vulkan:" <<net.opt.use_vulkan_compute <<std::endl;
-//        }
+        //        if (net.opt.use_vulkan_compute)
+        //        {
+        //            net.set_vulkan_device(g_vkdev);
+        //            ex.set_vulkan_compute(true);
+        //            std::cout<< "ex using vulkan:" <<net.opt.use_vulkan_compute <<std::endl;
+        //        }
 #endif // NCNN_VULKAN
 
         ex.input(styletransfer_param_id::BLOB_input1, in);

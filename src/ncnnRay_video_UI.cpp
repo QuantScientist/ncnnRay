@@ -59,7 +59,7 @@ int main() {
 
     LFFD lffd1(model_path, 8, 0, opt);
 
-    Detector detector (model_path, opt, false);
+    Detector detector(model_path, opt, false);
 
     const int screenWidth = 1600;
     const int screenHeight = 1200;
@@ -120,12 +120,12 @@ int main() {
     float smallPadding = 40;
     float leftPadding = 160;
 
-    auto statusBarRect = Rectangle{0, (float)GetScreenHeight() - 28, (float)GetScreenWidth(), 28};
+    auto statusBarRect = Rectangle{0, (float) GetScreenHeight() - 28, (float) GetScreenWidth(), 28};
     GuiPanel(Rectangle{0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()});
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        const char* statusText = TextFormat("GPU: %s", glGetString(GL_RENDERER)); //
+        const char *statusText = TextFormat("GPU: %s", glGetString(GL_RENDERER)); //
         GuiStatusBar(statusBarRect, statusText);
 //        handleExport(fileName, image, imageLoaded, btnExport, windowBoxActive, texture);
         handleImageScaling(screenWidth, screenHeight, vs.imageFrame, vs.videoLoaded, imageScale, imageRec);
@@ -221,8 +221,9 @@ int main() {
         animate = (GuiCheckBox(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 8 * padding, 20, 20},
                                "Animate", animate));
 
-        isVulkan = (GuiCheckBox(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 11 * padding, 30, 20},
-                               "Vulkan", isVulkan));
+        isVulkan = (GuiCheckBox(
+                Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 11 * padding, 30, 20},
+                "Vulkan", isVulkan));
 
         if (animate && vs.videoLoaded) {
             TraceLog(LOG_DEBUG, "TorchRaLib: Animate");

@@ -27,16 +27,16 @@ public:
     void detectFacesAndDrawOnImage(Image &image);
 
 private:
-    int detect(ncnn::Mat &img, std::vector<FaceInfo> &face_lis, int resize_h, int resize_w,
+    int detect(ncnn::Mat &img, std::vector <FaceInfo> &face_lis, int resize_h, int resize_w,
                float score_threshold = 0.6, float nms_threshold = 0.5, int top_k = 10000,
                std::vector<int> skip_scale_branch_list = {});
 
-    void generateBBox(std::vector<FaceInfo> &collection, ncnn::Mat score_map, ncnn::Mat box_map, float score_threshold,
+    void generateBBox(std::vector <FaceInfo> &collection, ncnn::Mat score_map, ncnn::Mat box_map, float score_threshold,
                       int fea_w, int fea_h, int cols, int rows, int scale_id);
 
-    void get_topk_bbox(std::vector<FaceInfo> &input, std::vector<FaceInfo> &output, int topk);
+    void get_topk_bbox(std::vector <FaceInfo> &input, std::vector <FaceInfo> &output, int topk);
 
-    void nms(std::vector<FaceInfo> &input, std::vector<FaceInfo> &output,
+    void nms(std::vector <FaceInfo> &input, std::vector <FaceInfo> &output,
              float threshold, int type = NMS_MIN);
 
 private:
@@ -56,7 +56,7 @@ private:
     std::vector<float> receptive_field_center_start;
     std::vector<float> constant;
 
-    std::vector<std::string> output_blob_names;
+    std::vector <std::string> output_blob_names;
 
     const float mean_vals[3] = {127.5, 127.5, 127.5};
     const float norm_vals[3] = {0.0078125, 0.0078125, 0.0078125};

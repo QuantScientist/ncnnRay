@@ -316,6 +316,7 @@ int plm_has_headers(plm_t *self);
 // Get or set whether video decoding is enabled. Default TRUE.
 
 int plm_get_video_enabled(plm_t *self);
+
 void plm_set_video_enabled(plm_t *self, int enabled);
 
 
@@ -327,6 +328,7 @@ int plm_get_num_video_streams(plm_t *self);
 // Get the display width/height of the video stream.
 
 int plm_get_width(plm_t *self);
+
 int plm_get_height(plm_t *self);
 
 
@@ -338,6 +340,7 @@ double plm_get_framerate(plm_t *self);
 // Get or set whether audio decoding is enabled. Default TRUE.
 
 int plm_get_audio_enabled(plm_t *self);
+
 void plm_set_audio_enabled(plm_t *self, int enabled);
 
 
@@ -362,6 +365,7 @@ int plm_get_samplerate(plm_t *self);
 // for output. E.g. for SDL2: (SDL_AudioSpec.samples / samplerate)
 
 double plm_get_audio_lead_time(plm_t *self);
+
 void plm_set_audio_lead_time(plm_t *self, double lead_time);
 
 
@@ -383,6 +387,7 @@ void plm_rewind(plm_t *self);
 // Get or set looping. Default FALSE.
 
 int plm_get_loop(plm_t *self);
+
 void plm_set_loop(plm_t *self, int loop);
 
 
@@ -666,6 +671,7 @@ double plm_video_get_framerate(plm_video_t *self);
 // Get the display width/height.
 
 int plm_video_get_width(plm_video_t *self);
+
 int plm_video_get_height(plm_video_t *self);
 
 
@@ -713,10 +719,15 @@ plm_frame_t *plm_video_decode(plm_video_t *self);
 // Note that the alpha component of the dest buffer is always left untouched.
 
 void plm_frame_to_rgb(plm_frame_t *frame, uint8_t *dest, int stride);
+
 void plm_frame_to_bgr(plm_frame_t *frame, uint8_t *dest, int stride);
+
 void plm_frame_to_rgba(plm_frame_t *frame, uint8_t *dest, int stride);
+
 void plm_frame_to_bgra(plm_frame_t *frame, uint8_t *dest, int stride);
+
 void plm_frame_to_argb(plm_frame_t *frame, uint8_t *dest, int stride);
+
 void plm_frame_to_abgr(plm_frame_t *frame, uint8_t *dest, int stride);
 
 
@@ -4305,11 +4316,11 @@ void plm_audio_decode_frame(plm_audio_t *self) {
                     // Output samples
 #ifdef PLM_AUDIO_SEPARATE_CHANNELS
                                                                                                                                             float *out_channel = ch == 0
-							? self->samples.left
-							: self->samples.right;
-						for (int j = 0; j < 32; j++) {
-							out_channel[out_pos + j] = self->U[j] / 2147418112.0f;
-						}
+                            ? self->samples.left
+                            : self->samples.right;
+                        for (int j = 0; j < 32; j++) {
+                            out_channel[out_pos + j] = self->U[j] / 2147418112.0f;
+                        }
 #else
                     for (int j = 0; j < 32; j++) {
                         self->samples.interleaved[((out_pos + j) << 1) + ch] =

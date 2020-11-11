@@ -62,7 +62,9 @@
 #include <algorithm>
 #include <windows.h> // Sleep()
 #else
+
 #include <unistd.h> // sleep()
+
 #endif
 //#include "benchmark.h"
 #include "cpu.h"
@@ -90,29 +92,25 @@
 #include <iostream>
 #include <chrono>
 
-struct ScopeTimer
-{
+struct ScopeTimer {
     std::chrono::high_resolution_clock::time_point start;
-    const char* title;
+    const char *title;
 
-    ScopeTimer()
-    {
+    ScopeTimer() {
         title = nullptr;
         start = std::chrono::high_resolution_clock::now();
     }
 
-    ScopeTimer(const char* title)
-    {
+    ScopeTimer(const char *title) {
         this->title = title;
         start = std::chrono::high_resolution_clock::now();
     }
 
-    ~ScopeTimer()
-    {
+    ~ScopeTimer() {
         using std::chrono::duration_cast;
         using std::chrono::microseconds;
         auto end = std::chrono::high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(end - start)/1000.0;
+        auto duration = duration_cast<microseconds>(end - start) / 1000.0;
         std::cout << (title ? title : "") << ": " << duration.count() << " ms\n";
     }
 };
@@ -192,7 +190,7 @@ static ncnn::Option optGPU(bool use_vulkan_compute = false, int gpu_device = -1)
 //    opt.use_image_storage = false;
 
     opt.use_vulkan_compute = use_vulkan_compute;
-    #if NCNN_VULKAN
+#if NCNN_VULKAN
     if (use_vulkan_compute && gpu_device > -1) {
         TraceLog(LOG_INFO, "ncnnRay: use_vulkan_compute:%i", use_vulkan_compute);
 //        ncnn::create_gpu_instance();
@@ -202,20 +200,16 @@ static ncnn::Option optGPU(bool use_vulkan_compute = false, int gpu_device = -1)
         opt.workspace_vkallocator = g_blob_vkallocator;
         opt.staging_vkallocator = g_staging_vkallocator;
     }
-    #endif // NCNN_VULKAN
+#endif // NCNN_VULKAN
 
     return opt;
 }
 
-static void pretty_print(const ncnn::Mat& m)
-{
-    for (int q=0; q<m.c; q++)
-    {
-        const float* ptr = m.channel(q);
-        for (int y=0; y<m.h; y++)
-        {
-            for (int x=0; x<m.w; x++)
-            {
+static void pretty_print(const ncnn::Mat &m) {
+    for (int q = 0; q < m.c; q++) {
+        const float *ptr = m.channel(q);
+        for (int y = 0; y < m.h; y++) {
+            for (int x = 0; x < m.w; x++) {
                 printf("%f ", ptr[x]);
             }
             ptr += m.w;
@@ -227,10 +221,10 @@ static void pretty_print(const ncnn::Mat& m)
 
 static int isGPU() {
     // initialize when app starts
-    int ins=0;
-    #if NCNN_VULKAN
+    int ins = 0;
+#if NCNN_VULKAN
     ins = ncnn::get_gpu_count();
-    #endif // NCNN_VULKAN
+#endif // NCNN_VULKAN
     std::cout << "GPU instance=?:" << ins << std::endl;;
 //    auto g= ncnn::get_gpu_device(0);
 //    std::cout<<"GPU Device=?:" << g <<std::endl;;
