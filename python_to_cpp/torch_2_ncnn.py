@@ -29,12 +29,13 @@ model=res_conv2
 x = torch.rand(1, 3, 224, 224)
 torch_out = torch.onnx._export(model, x, "resnet50.onnx", export_params=True)
 
-# import onnx
-# from onnxsim import simplify
-#
-# # load your predefined ONNX model
-# model = onnx.load("resnet50.onnx")
-# # convert model
-# model_simp, check = simplify(model)
-#
-# assert check, "Simplified ONNX model could not be validated"
+import onnx
+from onnxsim import simplify
+
+# load your predefined ONNX model
+model = onnx.load("resnet50.onnx")
+# convert model
+model_simp, check = simplify(model)
+assert check, "Simplified ONNX model could not be validated"
+print (model_simp)
+onnx.save(model_simp,"resnet50-sim.onnx")

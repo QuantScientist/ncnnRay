@@ -117,18 +117,18 @@ int main() {
     image = LoadImage(imgName.c_str());
     texture = LoadTextureFromImage(image);
 
-//    std::vector<float> feature1;
+    std::vector<float> feature1;
 
 //    std::string model_fv_name= "mobilefacenets";
-//    std::string model_fv_name= "resnet50-opt";
-//    FeatureExtractor fv(model_path,model_fv_name , opt);
-////    auto x1=fv.ExtractFeature(image,"data","fc1");
-//    auto x1=fv.ExtractFeature(image,"input.1","652");
-//    ImageResize(&image,512,512);
-//    auto x2=fv.ExtractFeature(image,"input.1","652");
-//
-//    TraceLog(LOG_INFO, "ncnnRay: vec sim 0 =%f", fv.calculateSimilarity(x1,x2));
-//    TraceLog(LOG_INFO, "ncnnRay: vec sim 1 =%f", fv.getSimilarity(x1,x2));
+    std::string model_fv_name= "resnet50-sim";
+    FeatureExtractor fv(model_path,model_fv_name , opt);
+//    auto x1=fv.ExtractFeature(image,"data","fc1");
+    auto x1=fv.ExtractFeature(image,"input.1","656");
+    ImageResize(&image,512,512);
+    auto x2=fv.ExtractFeature(image,"input.1","656");
+
+    TraceLog(LOG_INFO, "ncnnRay: vec sim 0 =%f", fv.calculateSimilarity(x1,x2));
+    TraceLog(LOG_INFO, "ncnnRay: vec sim 1 =%f", fv.getSimilarity(x1,x2));
 
     if (texture.id > 0) {
         imageLoaded=true;
@@ -206,14 +206,14 @@ int main() {
             texture = LoadTextureFromImage(image);
         }
 //
-//        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "FV512")) {
-////            PlaySound(clickSound);
-////            auto x=fv.ExtractFeature(image,"data","fc1");
-//            auto x=fv.ExtractFeature(image,"input.1","652");
-//            TraceLog(LOG_INFO, "ncnnRay: Fv %d", x.size());
-////            ImageColorBrightness(&image, +40);
-//            texture = LoadTextureFromImage(image);
-//        }
+        if (GuiButton(Rectangle{screenWidth - leftPadding, screenHeight - smallPadding - 6 * padding, buttonWidth, buttonHeight}, "FV512")) {
+//            PlaySound(clickSound);
+//            auto x=fv.ExtractFeature(image,"data","fc1");
+            auto x=fv.ExtractFeature(image,"input.1","656");
+            TraceLog(LOG_INFO, "ncnnRay: Fv %d", x.size());
+//            ImageColorBrightness(&image, +40);
+            texture = LoadTextureFromImage(image);
+        }
 
         //        GuiSetTooltip("Set the random seed.");
         randomSeed = GuiSlider(Rectangle{ screenWidth - leftPadding,screenHeight - smallPadding - 7*padding, buttonWidth/2, 15},
